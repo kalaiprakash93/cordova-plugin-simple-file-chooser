@@ -24,7 +24,7 @@
 
 	<platform name="ios">
 		<source-file src="src/ios/Chooser.swift" />
-		<header-file src="src/ios/PermissionScope/PermissionScope.h"/>
+		<header-file src="src/ios/PermissionScope.h"/>
 		<header-file src="src/ios/PermissionScope-Bridging-Header.h"/>
 		<dependency id="cordova-plugin-add-swift-support" version="*" />
 
