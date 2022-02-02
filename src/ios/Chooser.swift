@@ -1,7 +1,6 @@
 import UIKit
 import MobileCoreServices
 import Foundation
-import Cordova
 
 @objc(Chooser)
 class Chooser : CDVPlugin {
