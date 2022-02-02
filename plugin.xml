@@ -23,10 +23,10 @@
 	</platform>
 
 	<platform name="ios">
+		<header-file src="src/ios/Chooser.h"/>
+		<header-file src="src/ios/Chooser-Bridging-Header.h"/>
 		<source-file src="src/ios/Chooser.swift" />
-		<header-file src="src/ios/PermissionScope.h"/>
-		<header-file src="src/ios/PermissionScope-Bridging-Header.h"/>
-		<dependency id="cordova-plugin-add-swift-support" version="*" />
+		<dependency id="cordova-plugin-add-swift-support" version="2.0.2" />
 
 		<config-file target="config.xml" parent="/*">
 			<feature name="Chooser">
