@@ -22,7 +22,7 @@
 		</config-file>
 	</platform>
 
-	<platform name="ios">
+	<!--<platform name="ios">
 		<header-file src="src/ios/Chooser.h"/>
 		<header-file src="src/ios/Chooser-Bridging-Header.h"/>
 		<source-file src="src/ios/Chooser.swift" />
@@ -33,5 +33,5 @@
 				<param name="ios-package" value="Chooser" />
 			</feature>
 		</config-file>
-	</platform>
+	</platform>-->
 </plugin>
