@@ -2,6 +2,7 @@ package in.foobars.cordova;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -9,8 +10,11 @@ import android.provider.MediaStore;
 import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.Exception;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +30,7 @@ public class Chooser extends CordovaPlugin {
     private static final String ACTION_OPEN = "getFiles";
     private static final int PICK_FILE_REQUEST = 1;
     private static final String TAG = "Chooser";
+    public static File rootDirectory = null;
 
     public static String getDisplayName(ContentResolver contentResolver, Uri uri) {
         String[] projection = {MediaStore.MediaColumns.DISPLAY_NAME};
@@ -65,6 +70,7 @@ public class Chooser extends CordovaPlugin {
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
+        rootDirectory = new File(cordova.getActivity().getExternalFilesDir(""), "");
         try {
             if (action.equals(Chooser.ACTION_OPEN)) {
                 this.chooseFile(callbackContext, args.getString(0));
@@ -106,9 +112,27 @@ public class Chooser extends CordovaPlugin {
     }
 
     public JSONObject processFileUri(Uri uri) {
+        String fileName = null, extension = null, filePath = null;
         ContentResolver contentResolver = this.cordova.getActivity().getContentResolver();
         String name = Chooser.getDisplayName(contentResolver, uri);
         String mediaType = contentResolver.getType(uri);
+        Cursor cursor = null;
+        if (uri.getScheme().equals("file")) {
+            fileName = uri.getLastPathSegment();
+        } else {
+            try {
+                cursor = cordova.getActivity().getApplicationContext().getContentResolver().query(uri, new String[]{ MediaStore.Images.ImageColumns.DISPLAY_NAME }, null, null, null);
+                if (cursor != null && cursor.moveToFirst()) {
+                    fileName = cursor.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DISPLAY_NAME));
+                }
+            } finally {
+                if (cursor != null) {
+                    cursor.close();
+                }
+            }
+        }
+        filePath = copyFileFromUri(cordova.getActivity().getApplicationContext(), uri, fileName, callback);
+        File file1 = new File(filePath);
         if (mediaType == null || mediaType.isEmpty()) {
             mediaType = "application/octet-stream";
         }
@@ -116,10 +140,36 @@ public class Chooser extends CordovaPlugin {
         try {
             file.put("mediaType", mediaType);
             file.put("name", name);
+            file.put("filePath", "file://"+file1.getPath());
             file.put("uri", uri.toString());
         } catch (JSONException err) {
             this.callback.error("Processing failed: " + err.toString());
         }
         return file;
+    }
+    public String copyFileFromUri(Context context, Uri fileUri, String fileName, CallbackContext callback) {
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        String outPutFilePath = null;
+        try {
+            ContentResolver content = context.getContentResolver();
+            inputStream = content.openInputStream(fileUri);
+            File saveDirectory = new File(rootDirectory + "/" + "images");
+            saveDirectory.mkdirs();
+            outPutFilePath = saveDirectory + "/" + fileName;
+            outputStream = new FileOutputStream(outPutFilePath);
+            if(outputStream != null) {
+                byte[] buffer = new byte[1000];
+                int bytesRead = 0;
+                while ((bytesRead = inputStream.read( buffer, 0, buffer.length )) >= 0) {
+                    outputStream.write( buffer, 0, buffer.length );
+                }
+            } else {
+                callback.error("Error occurred in opening outputStream");
+            }
+        } catch (Exception e) {
+            callback.error("Exception occurred " + e.getMessage());
+        }
+        return outPutFilePath;
     }
 }
