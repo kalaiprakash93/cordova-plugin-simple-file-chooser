@@ -53,7 +53,11 @@ public class Chooser extends CordovaPlugin {
 
     public void chooseFile(CallbackContext callbackContext, String accept) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
+        if(accept.equals("image/*")) {
+            intent.setType("image/*");
+        }else{
+            intent.setType("application/pdf");
+        }
         intent.putExtra(Intent.EXTRA_MIME_TYPES, accept.split(","));
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
