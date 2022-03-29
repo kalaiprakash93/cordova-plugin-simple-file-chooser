@@ -16,7 +16,7 @@ class Chooser : CDVPlugin {
 		let picker = UIDocumentPickerViewController(documentTypes: utis, in: .import)
 		picker.delegate = self
         if #available(iOS 11.0, *) {
-            picker.allowsMultipleSelection = true
+           // picker.allowsMultipleSelection = true
         }
 
 		self.viewController.present(picker, animated: true, completion: nil)
