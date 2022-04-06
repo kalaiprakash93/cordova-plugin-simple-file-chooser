@@ -1,6 +1,7 @@
 import UIKit
 import MobileCoreServices
 import Foundation
+import PDFKit
 
 @objc(Chooser)
 class Chooser : CDVPlugin {
@@ -10,6 +11,7 @@ class Chooser : CDVPlugin {
         let mediaType: String
         let name: String
         let uri: String
+        let lockStatus: Bool
      }
 
 	func callPicker (utis: [String]) {
@@ -52,7 +54,8 @@ class Chooser : CDVPlugin {
                 let result = FileInfo(
                     mediaType: self.detectMimeType(newURL),
                     name: newURL.lastPathComponent,
-                    uri: newURL.absoluteString
+                    uri: newURL.absoluteString,
+                    lockStatus: self.isLocked(newURL.absoluteString)!
                 )
 
                 results.append(result);
@@ -136,6 +139,23 @@ class Chooser : CDVPlugin {
 	func sendError (_ message: String) {
 		self.send(message, CDVCommandStatus_ERROR)
 	}
+    
+    public func isLocked(_ filePath: String) -> Bool? {
+        var isProtected = false;
+        let path : NSString = filePath as NSString
+        let thePath = path.expandingTildeInPath
+        let url = URL(string: thePath)!;
+        if let pdfDocument = PDFDocument(url: url) {
+            if pdfDocument.isLocked {
+                print("Yes it's password protected..")
+                isProtected = true;
+            } else {
+                print("No it's not password protected..")
+                isProtected = false;
+            }
+        }
+        return isProtected;
+    }
 }
 
 extension Chooser : UIDocumentPickerDelegate {
