@@ -14,6 +14,7 @@
 
 	<platform name="android">
 		<source-file src="src/android/Chooser.java" target-dir="src/in/foobars/cordova" />
+		 <source-file src="src/android/libs/itext.jar" target-dir="libs" framework="true"/>    
 
 		<config-file target="config.xml" parent="/*">
 			<feature name="Chooser">
