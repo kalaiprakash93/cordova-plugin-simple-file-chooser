@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Base64;
 
+import com.itextpdf.text.pdf.PdfReader;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -122,6 +124,7 @@ public class Chooser extends CordovaPlugin {
         ContentResolver contentResolver = this.cordova.getActivity().getContentResolver();
         String name = Chooser.getDisplayName(contentResolver, uri);
         String mediaType = contentResolver.getType(uri);
+        Boolean lockStatus = false;
         Cursor cursor = null;
         if (uri.getScheme().equals("file")) {
             fileName = uri.getLastPathSegment();
@@ -148,6 +151,7 @@ public class Chooser extends CordovaPlugin {
             file.put("name", name);
             file.put("filePath", "file://"+file1.getPath());
             file.put("uri", uri.toString());
+            file.put("lockStatus", IsPasswordProtected(file1.getPath());
         } catch (JSONException err) {
             this.callback.error("Processing failed: " + err.toString());
         }
@@ -177,5 +181,18 @@ public class Chooser extends CordovaPlugin {
             callback.error("Exception occurred " + e.getMessage());
         }
         return outPutFilePath;
+    }
+     public boolean IsPasswordProtected(File pdfFullname) {
+        boolean isValidPdf = false;
+        try {
+            InputStream tempStream = new FileInputStream(pdfFullname);
+            PdfReader reader = new PdfReader(tempStream);
+            isValidPdf = reader.isOpenedWithFullPermissions();
+            System.out.println(isValidPdf);
+        } catch (Exception e) {
+            System.out.println(e);
+            isValidPdf = false;
+        }
+        return isValidPdf;
     }
 }
