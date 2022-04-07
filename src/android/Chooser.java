@@ -151,7 +151,7 @@ public class Chooser extends CordovaPlugin {
             file.put("name", name);
             file.put("filePath", "file://"+file1.getPath());
             file.put("uri", uri.toString());
-            file.put("lockStatus", IsPasswordProtected(file1.getPath()));
+            file.put("lockStatus", IsPasswordProtected(file1));
         } catch (JSONException err) {
             this.callback.error("Processing failed: " + err.toString());
         }
