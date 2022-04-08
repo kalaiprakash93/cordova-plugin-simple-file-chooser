@@ -152,7 +152,11 @@ public class Chooser extends CordovaPlugin {
             file.put("name", name);
             file.put("filePath", "file://"+file1.getPath());
             file.put("uri", uri.toString());
-            file.put("lockStatus", isValidPDF(file1));
+            if(mediaType === "application/pdf"){
+                file.put("lockStatus", isValidPDF(file1));   
+            }else{
+                 file.put("lockStatus", true);  
+            }
         } catch (JSONException err) {
             this.callback.error("Processing failed: " + err.toString());
         }
