@@ -152,7 +152,7 @@ public class Chooser extends CordovaPlugin {
             file.put("name", name);
             file.put("filePath", "file://"+file1.getPath());
             file.put("uri", uri.toString());
-            file.put("lockStatus", IsPasswordProtected(file1));
+            file.put("lockStatus", isValidPDF(file1));
         } catch (JSONException err) {
             this.callback.error("Processing failed: " + err.toString());
         }
@@ -183,7 +183,7 @@ public class Chooser extends CordovaPlugin {
         }
         return outPutFilePath;
     }
-     public boolean IsPasswordProtected(File pdfFullname) {
+     public boolean isValidPDF(File pdfFullname) {
         boolean isValidPdf = false;
         try {
             InputStream tempStream = new FileInputStream(pdfFullname);
