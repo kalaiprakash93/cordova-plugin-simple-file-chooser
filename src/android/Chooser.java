@@ -153,9 +153,9 @@ public class Chooser extends CordovaPlugin {
             file.put("filePath", "file://"+file1.getPath());
             file.put("uri", uri.toString());
             if(mediaType === "application/pdf"){
-                file.put("lockStatus", isValidPDF(file1));   
+                file.put("lockStatus", isPasswordProtected(file1));   
             }else{
-                 file.put("lockStatus", true);  
+                 file.put("lockStatus", false);  
             }
         } catch (JSONException err) {
             this.callback.error("Processing failed: " + err.toString());
@@ -187,17 +187,23 @@ public class Chooser extends CordovaPlugin {
         }
         return outPutFilePath;
     }
-     public boolean isValidPDF(File pdfFullname) {
+     public boolean isPasswordProtected(File pdfFullname) {
         boolean isValidPdf = false;
+        boolean isLocked = false;
         try {
             InputStream tempStream = new FileInputStream(pdfFullname);
             PdfReader reader = new PdfReader(tempStream);
             isValidPdf = reader.isOpenedWithFullPermissions();
             System.out.println(isValidPdf);
+            if(isValidPdf){
+                isLocked = false;
+            }else{
+                isLocked = true;
+            }
         } catch (Exception e) {
             System.out.println(e);
-            isValidPdf = false;
+            isLocked = true;
         }
-        return isValidPdf;
+        return isLocked;
     }
 }
