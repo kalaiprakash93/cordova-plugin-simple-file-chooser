@@ -152,7 +152,7 @@ public class Chooser extends CordovaPlugin {
             file.put("name", name);
             file.put("filePath", "file://"+file1.getPath());
             file.put("uri", uri.toString());
-            if(mediaType === "application/pdf"){
+            if(mediaType == "application/pdf"){
                 file.put("lockStatus", isPasswordProtected(file1));   
             }else{
                  file.put("lockStatus", false);  
